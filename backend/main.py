@@ -3,25 +3,23 @@ from pydantic import BaseModel
 import openai, os 
 from dotenv import load_dotenv
 
-# load .env variables 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# initialize FastAPI app 
 app = FastAPI()
+conversation_history = [] 
+client = OpenAI()
 
-# define request model 
-class Prompt(BaseModel): 
-    text:str 
-    
 class Prompt(BaseModel):
-    num: int 
-
-# define route 
+    text: str 
+    
 @app.post("/ask")
-async def ask_agent(prompt: Prompt): 
-    return {"reply": f"You said {prompt.text}"}
-
-@app.post("/arbitrayRoute")
-async def some_random_function_name(prompt: Prompt):
-        return {"reply": f"You gave the number {prompt.num}"}
+def talk_to_GPT(prompt: Prompt):
+    conversation_history.append({"role": "user", "content": prompt.text})
+    response = client.chat.completions.create(
+        model = "gpt-4o-mini",
+        messages = conversation_history
+    )
+    reply = response.choices[0].message.content
+    conversation_history.append({"role": "assistant", "content": reply})
+    return {"reply": reply}
