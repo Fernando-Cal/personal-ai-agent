@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
 
 load_dotenv()  # loads OPENAI_API_KEY from .env
 
