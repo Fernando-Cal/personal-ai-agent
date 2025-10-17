@@ -12,3 +12,10 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # base class for models, lets us define tables using python classes
 Base = declarative_base()
+
+def get_db():
+    db = SessionLocal() # open connection 
+    try:
+        yield db
+    finally:
+        db.close() # close session after route finishes
